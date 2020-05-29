@@ -27,11 +27,16 @@ for f = 1:size(file, 2)
     
     for i = 1:n_events
         if (h.EVENT.TYP(i) == 769) || (h.EVENT.TYP(i) == 770)
-            trial_count     = trial_count + 1;
             event_pos       = h.EVENT.POS(i); % position of the event
             event_end       = event_pos + (extract_dur * freq) - 1; % end of event
 
-            x(trial_count, :, :) = s(event_pos:event_end, 1:n_channel);
+            sel_data        = s(event_pos:event_end, 1:n_channel);
+            if sum(isnan(sel_data(:))) ~= 0
+                continue;
+            end
+            
+            trial_count     = trial_count + 1;
+            x(trial_count, :, :) = sel_data;
             
             % save sample class
             if h.EVENT.TYP(i) == 769
